@@ -1,0 +1,327 @@
+/* src/index.css */
+@import "tailwindcss";
+
+/* ============================================
+   THEME VARIABLES
+   ============================================ */
+:root,
+html.dark {
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #0d0b10;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-card-hover: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.2);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-faint: rgba(255, 255, 255, 0.3);
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.03)
+  );
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --shadow: rgba(0, 0, 0, 0.35);
+  --navbar-bg: rgba(255, 255, 255, 0.1);
+  --navbar-border: rgba(255, 255, 255, 0.2);
+}
+
+/* ✅ Light Theme */
+html.light {
+  --bg-primary: #e8e4dc;
+  --bg-secondary: #dedad2;
+  --bg-card: rgba(255, 255, 255, 0.5);
+  --bg-card-hover: rgba(255, 255, 255, 0.7);
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.15);
+  --text-primary: #2a2a2a;
+  --text-secondary: rgba(42, 42, 42, 0.75);
+  --text-muted: rgba(42, 42, 42, 0.55);
+  --text-faint: rgba(42, 42, 42, 0.35);
+  --glass-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.7),
+    rgba(255, 255, 255, 0.4)
+  );
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --shadow: rgba(0, 0, 0, 0.08);
+  --navbar-bg: rgba(255, 255, 255, 0.7);
+  --navbar-border: rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   BASE
+   ============================================ */
+body {
+  margin: 0;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   BACKGROUND
+   ============================================ */
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(176, 122, 154, 0.15), transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(176, 122, 154, 0.08), transparent 50%),
+    var(--bg-primary);
+  transition: background 0.3s ease;
+}
+
+html.light .bg-orbs {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(176, 122, 154, 0.12), transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(176, 122, 154, 0.06), transparent 50%),
+    var(--bg-primary);
+}
+
+.orb {
+  display: none;
+}
+
+/* ============================================
+   GLASS EFFECT
+   ============================================ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 12px 40px var(--shadow);
+  transition: background 0.3s ease, border 0.3s ease;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  display: inline-block;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  border-radius: 9999px;
+  padding: 0.5rem 1.1rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: 0.2s;
+}
+.btn:hover {
+  background: var(--bg-card-hover);
+}
+.btn:active {
+  transform: scale(0.95);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #b07a9a, #7a4a68);
+  border-color: transparent;
+  color: #fff;
+}
+
+.btn-red {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-color: transparent;
+  font-weight: 700;
+  padding: 0.9rem 2.5rem;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.btn-white {
+  background: #fff;
+  color: #111;
+  font-weight: 700;
+  border-color: transparent;
+}
+.btn-white:hover {
+  background: #eee;
+}
+
+/* ============================================
+   INPUTS
+   ============================================ */
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 0.8rem 1rem;
+  outline: none;
+  backdrop-filter: blur(12px);
+  transition: 0.2s;
+}
+.input::placeholder {
+  color: var(--text-muted);
+}
+.input:focus {
+  border-color: rgba(176, 122, 154, 0.6);
+  background: var(--bg-card-hover);
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(176, 122, 154, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(176, 122, 154, 0.5);
+}
+
+/* ============================================
+   🌙 LIGHT MODE OVERRIDES
+   ============================================ */
+
+/* ✅ Text ពណ៌ស → ខ្មៅ */
+html.light .text-white {
+  color: #2a2a2a !important;
+}
+
+html.light .text-white\/90,
+html.light .text-white\/85,
+html.light .text-white\/80,
+html.light .text-white\/75,
+html.light .text-white\/70,
+html.light .text-white\/60 {
+  color: rgba(42, 42, 42, 0.75) !important;
+}
+
+html.light .text-white\/50,
+html.light .text-white\/40 {
+  color: rgba(42, 42, 42, 0.55) !important;
+}
+
+html.light .text-white\/30,
+html.light .text-white\/20 {
+  color: rgba(42, 42, 42, 0.35) !important;
+}
+
+/* ✅ Background ពណ៌ស */
+html.light .bg-white\/5 {
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+html.light .bg-white\/10 {
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+html.light .bg-white\/15,
+html.light .bg-white\/20 {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ✅ Border ពណ៌ស */
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-white\/15,
+html.light .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ✅ Navbar */
+html.light nav > div {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ✅ Navbar Icons & Text ពណ៌ខ្មៅ */
+html.light nav a,
+html.light nav button,
+html.light nav span {
+  color: #2a2a2a;
+}
+
+html.light nav .text-white\/75,
+html.light nav .text-white\/80,
+html.light nav .text-white\/85 {
+  color: rgba(42, 42, 42, 0.75) !important;
+}
+
+html.light nav .text-white\/50,
+html.light nav .text-white\/60 {
+  color: rgba(42, 42, 42, 0.55) !important;
+}
+
+/* ✅ Navbar Buttons Background */
+html.light nav .bg-white\/10,
+html.light nav .bg-white\/15 {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light nav .bg-white\/10:hover,
+html.light nav .bg-white\/15:hover,
+html.light nav .bg-white\/20:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ✅ Search Input */
+html.light nav input {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #2a2a2a !important;
+}
+
+html.light nav input::placeholder {
+  color: rgba(42, 42, 42, 0.5) !important;
+}
+
+/* ✅ Navbar Active Link Border */
+html.light nav .after\:from-\[\#e0a0c0\]::after {
+  background: linear-gradient(90deg, #b07a9a, #7a4a68) !important;
+}
+
+/* ✅ Glass Cards */
+html.light .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ✅ Drop Shadow ស្រាល */
+html.light .drop-shadow-2xl {
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+}
+
+/* ✅ Song Card Shadow ស្រាល */
+html.light .shadow-2xl {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ✅ Hover effects */
+html.light .hover\:bg-white\/5:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light .hover\:bg-white\/10:hover,
+html.light .hover\:bg-white\/20:hover {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .hover\:text-white:hover {
+  color: #1a1a1a !important;
+}
