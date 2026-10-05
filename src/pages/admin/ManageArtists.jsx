@@ -27,7 +27,6 @@ export default function ManageArtists() {
   const [imagePreview, setImagePreview] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  // ===== Load =====
   const load = () => {
     setLoading(true);
     songService
@@ -41,7 +40,6 @@ export default function ManageArtists() {
     load();
   }, []);
 
-  // ===== Open Create =====
   const openCreate = () => {
     setEditing(null);
     setForm({ name: "", bio: "" });
@@ -51,7 +49,6 @@ export default function ManageArtists() {
     setShowModal(true);
   };
 
-  // ===== Open Edit =====
   const openEdit = (a) => {
     setEditing(a);
     setForm({ name: a.name, bio: a.bio || "" });
@@ -61,7 +58,6 @@ export default function ManageArtists() {
     setShowModal(true);
   };
 
-  // ===== Pick Image =====
   const pickImage = (e) => {
     const f = e.target.files[0];
     if (f) {
@@ -70,7 +66,6 @@ export default function ManageArtists() {
     }
   };
 
-  // ===== Submit =====
   const submit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
@@ -105,7 +100,6 @@ export default function ManageArtists() {
     }
   };
 
-  // ===== Delete =====
   const remove = async (a) => {
     if (!confirm(`លុប "${a.name}"? ចម្រៀងទាំងអស់នឹងលុបដែរ!`)) return;
     try {
@@ -118,7 +112,6 @@ export default function ManageArtists() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -142,7 +135,6 @@ export default function ManageArtists() {
         </button>
       </div>
 
-      {/* List */}
       {loading ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
@@ -152,7 +144,6 @@ export default function ManageArtists() {
             >
               <div className="w-16 h-16 rounded-full bg-white/10 mb-3" />
               <div className="h-3 w-3/4 rounded bg-white/10" />
-              <div className="h-2 w-1/2 rounded bg-white/5 mt-2" />
             </div>
           ))}
         </div>
@@ -164,14 +155,10 @@ export default function ManageArtists() {
           <h3 className="text-lg font-bold text-white mb-2">
             មិនទាន់មាន Artist ទេ
           </h3>
-          <p className="text-white/50 text-sm mb-5">
-            ចុច "បង្កើត Artist ថ្មី" ដើម្បីចាប់ផ្តើម
-          </p>
           <button
             onClick={openCreate}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white
-                       bg-gradient-to-r from-[#b07a9a] to-[#8a5a7a]
-                       shadow-lg shadow-[#b07a9a]/30"
+                       bg-gradient-to-r from-[#b07a9a] to-[#8a5a7a]"
           >
             <FiPlus />
             បង្កើត Artist ថ្មី
@@ -188,19 +175,27 @@ export default function ManageArtists() {
                            hover:border-[#b07a9a]/30 transition-all group"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 border-2 border-white/10">
+                  {/* ✅ Avatar with Fallback */}
+                  <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 border-2 border-white/10 bg-gradient-to-br from-[#b07a9a] to-[#7a4a68] grid place-items-center">
                     {img ? (
                       <img
                         src={img}
                         alt={a.name}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "grid";
+                        }}
                       />
-                    ) : (
-                      <div className="w-full h-full grid place-items-center bg-gradient-to-br from-[#b07a9a] to-[#7a4a68] text-white font-bold text-xl">
-                        {a.name?.[0]?.toUpperCase()}
-                      </div>
-                    )}
+                    ) : null}
+                    <div
+                      className="w-full h-full grid place-items-center text-white font-bold text-xl"
+                      style={{ display: img ? "none" : "grid" }}
+                    >
+                      {a.name?.[0]?.toUpperCase()}
+                    </div>
                   </div>
+
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-white truncate">{a.name}</p>
                     <p className="text-xs text-white/50 mt-0.5">
@@ -231,7 +226,6 @@ export default function ManageArtists() {
                     className="w-9 h-9 rounded-lg bg-white/5 border border-white/10
                                grid place-items-center text-white/70
                                hover:text-[#e0a0c0] hover:bg-white/10 transition-all"
-                    title="កែ"
                   >
                     <FiEdit2 className="text-sm" />
                   </button>
@@ -239,8 +233,7 @@ export default function ManageArtists() {
                     onClick={() => remove(a)}
                     className="w-9 h-9 rounded-lg bg-white/5 border border-white/10
                                grid place-items-center text-white/70
-                               hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 transition-all"
-                    title="លុប"
+                               hover:text-red-400 hover:bg-red-500/10 transition-all"
                   >
                     <FiTrash2 className="text-sm" />
                   </button>
@@ -254,14 +247,12 @@ export default function ManageArtists() {
       {/* Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm
-                     flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setShowModal(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-3xl bg-[#17131b] border border-white/10
-                       p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-md rounded-3xl bg-[#17131b] border border-white/10 p-6 shadow-2xl max-h-[90vh] overflow-y-auto"
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-bold text-white">
@@ -269,15 +260,13 @@ export default function ManageArtists() {
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="w-8 h-8 rounded-lg bg-white/5 grid place-items-center
-                           text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                className="w-8 h-8 rounded-lg bg-white/5 grid place-items-center text-white/60"
               >
                 <FiX />
               </button>
             </div>
 
             <form onSubmit={submit} className="space-y-4">
-              {/* Image */}
               <div className="flex flex-col items-center">
                 <label className="relative cursor-pointer group">
                   <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border-2 border-dashed border-white/20 group-hover:border-[#b07a9a] transition-all">
@@ -303,18 +292,14 @@ export default function ManageArtists() {
                     className="hidden"
                   />
                 </label>
-                <p className="text-[11px] text-white/40 mt-2">រូប Artist</p>
               </div>
 
-              {/* Name */}
               <div>
                 <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-1.5">
                   ឈ្មោះ <span className="text-red-400">*</span>
                 </label>
                 <input
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 
-                             text-sm text-white outline-none 
-                             focus:border-[#b07a9a] focus:bg-white/[0.07] transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-[#b07a9a] transition-all"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="ឧ. Gmengz"
@@ -322,15 +307,12 @@ export default function ManageArtists() {
                 />
               </div>
 
-              {/* Bio */}
               <div>
                 <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-1.5">
                   ប្រវត្តិ (ជម្រើស)
                 </label>
                 <textarea
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 
-                             text-sm text-white outline-none resize-none
-                             focus:border-[#b07a9a] focus:bg-white/[0.07] transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none resize-none focus:border-[#b07a9a] transition-all"
                   rows="3"
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
@@ -353,12 +335,7 @@ export default function ManageArtists() {
               <button
                 type="submit"
                 disabled={busy}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl
-                           text-sm font-bold text-white
-                           bg-gradient-to-r from-[#b07a9a] to-[#8a5a7a]
-                           hover:from-[#c08aaa] hover:to-[#9a6a8a]
-                           shadow-lg shadow-[#b07a9a]/30 transition-all
-                           disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#b07a9a] to-[#8a5a7a] disabled:opacity-50"
               >
                 <FiSave />
                 {busy ? "កំពុងរក្សាទុក..." : editing ? "រក្សាទុក" : "បង្កើត"}
