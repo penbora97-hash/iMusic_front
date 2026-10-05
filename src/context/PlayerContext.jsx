@@ -1,6 +1,9 @@
 // src/context/PlayerContext.jsx
 import { createContext, useContext, useState, useRef, useEffect } from "react";
 
+// ✅ ប្រើ VITE_API_URL ជំនួស Hardcoded localhost
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 const PlayerContext = createContext();
 
 export function PlayerProvider({ children }) {
@@ -19,13 +22,11 @@ export function PlayerProvider({ children }) {
 
   // ===== ✅ Play Song with Queue =====
   const playSong = (song, playlist = []) => {
-    // បើគ្មាន Playlist បញ្ជូន → ប្រើ Song តែមួយ
     const list = playlist.length > 0 ? playlist : [song];
 
     setQueue(list);
     setOriginalQueue(list);
 
-    // រក Index របស់ Song ក្នុង Queue
     const idx = list.findIndex((s) => s.id === song.id);
     setIndex(idx >= 0 ? idx : 0);
     setCurrent(song);
@@ -47,7 +48,6 @@ export function PlayerProvider({ children }) {
   const playNext = () => {
     if (!queue.length) return;
 
-    // Shuffle Mode
     if (shuffle) {
       let nextIdx = index;
       while (nextIdx === index && queue.length > 1) {
@@ -57,10 +57,8 @@ export function PlayerProvider({ children }) {
       return;
     }
 
-    // Normal Mode
     let nextIdx = index + 1;
     if (nextIdx >= queue.length) {
-      // អស់ Queue → Loop ទៅដើម
       nextIdx = 0;
     }
     playAt(queue, nextIdx);
@@ -71,7 +69,6 @@ export function PlayerProvider({ children }) {
     if (!queue.length) return;
 
     const audio = audioRef.current;
-    // បើលេង > 3s → ត្រលប់ដើមបទ
     if (audio && audio.currentTime > 3) {
       audio.currentTime = 0;
       return;
@@ -132,19 +129,15 @@ export function PlayerProvider({ children }) {
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onLoadedMetadata = () => setDuration(audio.duration);
 
-    // ✅ Auto-Play Next ពេលចប់
     const onEnded = () => {
       console.log("🎵 Song ended, auto-playing next...");
 
       if (repeat) {
-        // Repeat បទបច្ចុប្បន្ន
         audio.currentTime = 0;
         audio.play();
       } else if (queue.length > 1) {
-        // លេងបទបន្ទាប់
         playNext();
       } else {
-        // គ្មានបទបន្ទាប់
         setPlaying(false);
       }
     };
@@ -160,21 +153,27 @@ export function PlayerProvider({ children }) {
     };
   }, [queue, index, repeat, shuffle, current]);
 
-  // ===== Play/Pause Control =====
+  // ===== ✅ Play/Pause Control — ប្រើ API Variable =====
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !current) return;
 
+    // ✅ ប្រើ API (ពី VITE_API_URL) ជំនួស http://localhost:8000
     const url = current.file_url?.startsWith("http")
       ? current.file_url
-      : `http://localhost:8000${current.file_url}`;
+      : `${API}${current.file_url}`;
+
+    console.log("🔊 Audio URL:", url);  // ✅ Debug
 
     if (audio.src !== url) {
       audio.src = url;
     }
 
     if (playing) {
-      audio.play().catch(() => setPlaying(false));
+      audio.play().catch((e) => {
+        console.error("❌ Audio play error:", e);
+        setPlaying(false);
+      });
     } else {
       audio.pause();
     }
