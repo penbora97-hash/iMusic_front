@@ -6,15 +6,13 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 console.log("🔗 API URL:", API);
 
 /**
- * ✅ asset() — គាំទ្រទាំង Local និង Cloudinary URLs
- *
- * - បើ URL ជា http/https (Cloudinary) → Return ដដែល
- * - បើ URL ជា relative (/storage/...) → បន្ថែម API Domain
+ * ✅ asset() Function
+ * គាំទ្រទាំង Local URLs និង Cloudinary URLs
  */
 export const asset = (u) => {
   if (!u) return null;
 
-  // ✅ បើ URL ជា http/https រួចហើយ (Cloudinary, Google, etc.) → Return ដដែល
+  // ✅ បើ URL ជា http/https រួចហើយ (Cloudinary) → Return ដដែល
   if (u.startsWith("http://") || u.startsWith("https://")) {
     return u;
   }
@@ -41,3 +39,4 @@ export async function api(path, { method = "GET", body, form } = {}) {
   if (!res.ok) throw new Error(data.message || "មានបញ្ហា");
   return data;
 }
+  
