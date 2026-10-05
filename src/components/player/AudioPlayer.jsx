@@ -1,5 +1,6 @@
 // src/components/player/AudioPlayer.jsx
 import { usePlayer } from "../../context/PlayerContext";
+import { asset } from "../../services/api"; // ✅ បន្ថែម
 import {
   FiPlay,
   FiPause,
@@ -11,15 +12,10 @@ import {
   FiRepeat,
   FiShuffle,
   FiList,
+  FiMusic, // ✅ បន្ថែម
 } from "react-icons/fi";
 
-const API_BASE = "http://localhost:8000";
-
-const buildUrl = (path) => {
-  if (!path) return null;
-  if (path.startsWith("http")) return path;
-  return `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
-};
+// ❌ លុប API_BASE និង buildUrl ចេញ
 
 const formatTime = (s) => {
   if (!s || isNaN(s)) return "0:00";
@@ -52,7 +48,8 @@ export default function AudioPlayer() {
 
   if (!visible || !current) return null;
 
-  const cover = buildUrl(current.cover_url || current.artist?.image_url);
+  // ✅ ប្រើ asset() ជំនួស buildUrl()
+  const cover = asset(current.cover_url || current.artist?.image_url);
   const artistName =
     current.artist?.name || current.artist_name || "Unknown Artist";
 
@@ -75,19 +72,25 @@ export default function AudioPlayer() {
           <FiX className="text-sm" />
         </button>
 
-        {/* Cover */}
-        <div className="w-14 h-14 rounded-xl overflow-hidden bg-black/20 shrink-0 border border-white/20">
+        {/* ✅ Cover with Fallback */}
+        <div className="w-14 h-14 rounded-xl overflow-hidden bg-black/20 shrink-0 border border-white/20 grid place-items-center">
           {cover ? (
             <img
               src={cover}
               alt={current.title}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.style.display = "none";
+                e.target.nextSibling.style.display = "grid";
+              }}
             />
-          ) : (
-            <div className="w-full h-full grid place-items-center text-white/50">
-              ♪
-            </div>
-          )}
+          ) : null}
+          <div
+            className="w-full h-full grid place-items-center text-white/50"
+            style={{ display: cover ? "none" : "grid" }}
+          >
+            <FiMusic className="text-lg" />
+          </div>
         </div>
 
         {/* Info + Progress */}
@@ -96,7 +99,6 @@ export default function AudioPlayer() {
             <p className="text-white font-bold text-sm truncate flex-1">
               {current.title}
             </p>
-            {/* ✅ Queue Info */}
             {queue.length > 1 && (
               <span className="flex items-center gap-1 text-[10px] text-white/70 bg-black/20 px-2 py-0.5 rounded-full shrink-0">
                 <FiList className="text-[9px]" />
@@ -133,7 +135,6 @@ export default function AudioPlayer() {
 
         {/* Controls */}
         <div className="flex items-center gap-1.5 shrink-0">
-          {/* Shuffle */}
           <button
             onClick={toggleShuffle}
             className={`hidden md:grid w-9 h-9 rounded-full place-items-center transition-all relative ${
@@ -148,7 +149,6 @@ export default function AudioPlayer() {
             )}
           </button>
 
-          {/* Previous */}
           <button
             onClick={playPrev}
             className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 
@@ -157,7 +157,6 @@ export default function AudioPlayer() {
             <FiSkipBack className="text-sm" />
           </button>
 
-          {/* Play/Pause */}
           <button
             onClick={togglePlay}
             className="w-11 h-11 rounded-full bg-white text-[#d8508a] 
@@ -170,7 +169,6 @@ export default function AudioPlayer() {
             )}
           </button>
 
-          {/* Next */}
           <button
             onClick={playNext}
             className="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 
@@ -179,7 +177,6 @@ export default function AudioPlayer() {
             <FiSkipForward className="text-sm" />
           </button>
 
-          {/* Repeat */}
           <button
             onClick={toggleRepeat}
             className={`hidden md:grid w-9 h-9 rounded-full place-items-center transition-all relative ${
@@ -194,7 +191,6 @@ export default function AudioPlayer() {
             )}
           </button>
 
-          {/* Volume */}
           <div className="hidden lg:flex items-center gap-1 ml-1">
             {volume > 0 ? (
               <FiVolume2 className="text-white/70 text-sm" />
@@ -213,6 +209,6 @@ export default function AudioPlayer() {
           </div>
         </div>
       </div>
-    </div>
+    </div>  
   );
 }
