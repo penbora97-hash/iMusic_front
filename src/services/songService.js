@@ -1,34 +1,37 @@
-// src/services/songService.js
-import { api } from "./api";
+// src/services/api.js
 
-// ===== Songs =====
-export const list = (q = "") => api("/songs?q=" + encodeURIComponent(q));
-export const play = (id) => api(`/songs/${id}/play`, { method: "POST" });
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-// ===== Favorites =====
-export const favorites = () => api("/favorites");
-export const toggleFav = (id) => api("/favorites/" + id, { method: "POST" });
+console.log("🔗 API URL:", API);
 
-// ===== Admin - Songs =====
-export const upload = (form) => api("/admin/songs", { method: "POST", form });
-export const remove = (id) => api("/admin/songs/" + id, { method: "DELETE" });
-export const rename = (id, title) =>
-  api("/admin/songs/" + id, { method: "PUT", body: { title } });
+// ✅ asset() Function — គាំទ្រទាំង Local និង Cloudinary
+export const asset = (u) => {
+  if (!u) return null;
 
-// ===== Admin - Artists =====
-export const artists = () => api("/admin/artists");
-export const getArtist = (id) => api(`/admin/artists/${id}`);
-export const createArtist = (form) =>
-  api("/admin/artists", { method: "POST", form });
-export const updateArtist = (id, form) =>
-  api(`/admin/artists/${id}`, { method: "POST", form });
-export const deleteArtist = (id) =>
-  api(`/admin/artists/${id}`, { method: "DELETE" });
+  // ✅ បើ URL ជា http/https រួចហើយ (Cloudinary) → Return ដដែល
+  if (u.startsWith("http://") || u.startsWith("https://")) {
+    return u;
+  }
 
-// ✅ ===== Follow (ថ្មី) =====
-export const checkFollow = (artistId) => api(`/artists/${artistId}/follow`);
-export const toggleFollow = (artistId) =>
-  api(`/artists/${artistId}/follow`, { method: "POST" });
-export const following = () => api("/following");
+  // ✅ បើ URL ជា Relative (Local) → បន្ថែម API Domain
+  return API + u;
+};
 
-export const topCharts = () => api('/songs/top');
+export async function api(path, { method = "GET", body, form } = {}) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(API + "/api" + path, {
+    method,
+    headers: {
+      Accept: "application/json",
+      ...(token && { Authorization: "Bearer " + token }),
+      ...(body && { "Content-Type": "application/json" }),
+    },
+    body: form || (body && JSON.stringify(body)),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) throw new Error(data.message || "មានបញ្ហា");
+  return data;
+}
