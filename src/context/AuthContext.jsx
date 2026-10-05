@@ -19,7 +19,6 @@ export function AuthProvider({ children }) {
     auth
       .me()
       .then((data) => {
-        // ✅ គាំទ្រទាំង { user: {...} } និង {...user}
         setUser(data?.user || data);
       })
       .catch(() => {
@@ -31,7 +30,6 @@ export function AuthProvider({ children }) {
 
   const done = (r) => {
     localStorage.setItem("token", r.token);
-    // ✅ គាំទ្រទាំង { user: {...} } និង {...user}
     setUser(r.user || r);
   };
 
